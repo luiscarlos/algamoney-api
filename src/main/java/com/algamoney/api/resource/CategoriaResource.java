@@ -36,18 +36,19 @@ public class CategoriaResource {
 	@PostMapping
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
-		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
 			.buildAndExpand(categoriaSalva.getCodigo()).toUri();
 		response.setHeader("Location", uri.toASCIIString());
-		
 		return ResponseEntity.created(uri).body(categoriaSalva);
 	}
 	
+
+	
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Optional<Categoria>> buscarPeloCodigo(@PathVariable Long codigo) {
-		 Optional<Categoria> categoria = categoriaRepository.findById(codigo);
-		 return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
+	public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long codigo) {
+	Optional<Categoria> categoria = categoriaRepository.findById(codigo);
+	return categoria.isPresent() ? 
+	        ResponseEntity.ok(categoria.get()) : ResponseEntity.notFound().build();
 	}
 	
 }
