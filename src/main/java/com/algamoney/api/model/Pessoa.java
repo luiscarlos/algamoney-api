@@ -29,8 +29,6 @@ public class Pessoa implements Serializable{
     @NotNull
     private String nome;
     
-    @Unique@Column(unique = true)
-    private String email;
 
     @Embedded
     private Endereco endereco;
