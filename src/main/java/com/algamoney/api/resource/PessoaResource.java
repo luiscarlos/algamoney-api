@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algamoney.api.event.RecursoCriadoEvent;
 import com.algamoney.api.model.Pessoa;
 import com.algamoney.api.repository.PessoaRepository;
+import com.algamoney.api.service.PessoaService;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -32,14 +33,16 @@ public class PessoaResource {
 
 	@Autowired
 	private PessoaRepository pessoaRepository;
-
+	
+	@Autowired
+	private PessoaService pessoaService;
+	
 	@Autowired
 	private ApplicationEventPublisher publisher;
-
+	
 	@GetMapping
-	public List<Pessoa> list() {
+	public List<Pessoa> listar(){
 		return pessoaRepository.findAll();
-
 	}
 
 	@PostMapping
@@ -50,30 +53,27 @@ public class PessoaResource {
 	}
 
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Pessoa> buscarPorIde(@PathVariable Long codigo) {
+	public ResponseEntity<Optional<Pessoa>> buscarPeloCodigo(@PathVariable Long codigo) {
 		Optional<Pessoa> pessoa = pessoaRepository.findById(codigo);
-		return pessoa.isPresent() ? ResponseEntity.ok(pessoa.get()) : ResponseEntity.notFound().build();
-
+		return pessoa != null ? ResponseEntity.ok(pessoa) : ResponseEntity.notFound().build();
 	}
-
+	
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long codigo) {
-		this.pessoaRepository.deleteById(codigo);
+		pessoaRepository.deleteById(codigo);
 	}
-
+	
 	@PutMapping("/{codigo}")
-	public Pessoa atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
-		Optional<Pessoa> optPessoa = pessoaRepository.findById(codigo);
-		if (optPessoa.isEmpty()) {
-			throw new EmptyResultDataAccessException(1);
-		}
-
-		Pessoa pessoaSalva = optPessoa.get();
-
-		BeanUtils.copyProperties(pessoa, pessoaSalva, "codigo");
-		return pessoaRepository.save(pessoaSalva);
+	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
+		Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
+		return ResponseEntity.ok(pessoaSalva);
 	}
-
+	
+	@PutMapping("/{codigo}/ativo")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
+	//	pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
+	}
 
 }
