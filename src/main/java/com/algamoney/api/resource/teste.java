@@ -36,12 +36,15 @@ public class teste {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
-		Categoria categoriaSalva = categoriaRepository.save(categoria);
+	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pesso, HttpServletResponse response){
+		Pessoa pessoaSalva = pessoaRepository.save(pesso);
+		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
-			.buildAndExpand(categoriaSalva.getCodigo()).toUri();
+				.buildAndExpand(pessoaSalva.getCodigo()).toUri();
+		
 		response.setHeader("Location", uri.toASCIIString());
-		return ResponseEntity.created(uri).body(categoriaSalva);
+		
+		return ResponseEntity.created(uri).body(pessoaSalva);
 	}
 	
 

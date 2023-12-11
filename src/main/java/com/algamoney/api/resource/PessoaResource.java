@@ -2,6 +2,7 @@ package com.algamoney.api.resource;
 
 import java.util.List;
 import java.util.Optional;
+import java.net.URI;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.algamoney.api.event.RecursoCriadoEvent;
 import com.algamoney.api.model.Pessoa;
@@ -46,10 +48,16 @@ public class PessoaResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
+	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response){
 		Pessoa pessoaSalva = pessoaRepository.save(pessoa);
-		publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));
-		return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
+				.buildAndExpand(pessoaSalva.getCodigo()).toUri();
+		
+		response.setHeader("Location", uri.toASCIIString());
+	
+		return ResponseEntity.created(uri).body(pessoaSalva);
+				
+		
 	}
 
 	@GetMapping("/{codigo}")
