@@ -1,9 +1,7 @@
 package com.algamoney.api.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,45 +14,44 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+
+
 
 
 @Entity
 @Table(name = "lancamento")
-public class Lancamento implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
+public class Lancamento {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 	
-	private String nome;
-	
+	private String descricao;
+
 	@Column(name = "data_vencimento")
-	private LocalDate dataVecimento;
-	
+	//@JsonFormat(pattern =  "dd/MM/yyyy")
+	private LocalDate dataVencimento;
+
 	@Column(name = "data_pagamento")
+	//@JsonFormat(pattern =  "dd/MM/yyyy")
 	private LocalDate dataPagamento;
-	
+
 	private BigDecimal valor;
-	
-	private String observação;
-	
-	
+
+	private String observacao;
+
 	@Enumerated(EnumType.STRING)
 	private TipoLancamento tipo;
-	
-	
-	@ManyToOne
-	@JoinColumn(name = "codigo_pessoa")
-	private Pessoa pessoa;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "codigo_categoria")
 	private Categoria categoria;
+
+	@ManyToOne
+	@JoinColumn(name = "codigo_pessoa")
+	private Pessoa pessoa;
 
 	public Long getCodigo() {
 		return codigo;
@@ -64,20 +61,20 @@ public class Lancamento implements Serializable {
 		this.codigo = codigo;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
-	public LocalDate getDataVecimento() {
-		return dataVecimento;
+	public LocalDate getDataVencimento() {
+		return dataVencimento;
 	}
 
-	public void setDataVecimento(LocalDate dataVecimento) {
-		this.dataVecimento = dataVecimento;
+	public void setDataVencimento(LocalDate dataVencimento) {
+		this.dataVencimento = dataVencimento;
 	}
 
 	public LocalDate getDataPagamento() {
@@ -96,12 +93,12 @@ public class Lancamento implements Serializable {
 		this.valor = valor;
 	}
 
-	public String getObservação() {
-		return observação;
+	public String getObservacao() {
+		return observacao;
 	}
 
-	public void setObservação(String observação) {
-		this.observação = observação;
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 	public TipoLancamento getTipo() {
@@ -112,14 +109,6 @@ public class Lancamento implements Serializable {
 		this.tipo = tipo;
 	}
 
-	public Pessoa getPessoa() {
-		return pessoa;
-	}
-
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
-	}
-
 	public Categoria getCategoria() {
 		return categoria;
 	}
@@ -128,13 +117,20 @@ public class Lancamento implements Serializable {
 		this.categoria = categoria;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigo);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		return result;
 	}
 
 	@Override
@@ -146,10 +142,12 @@ public class Lancamento implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Lancamento other = (Lancamento) obj;
-		return Objects.equals(codigo, other.codigo);
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
+			return false;
+		return true;
 	}
 
-	
-	
-	
 }
