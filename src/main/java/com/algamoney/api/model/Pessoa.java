@@ -3,16 +3,19 @@ package com.algamoney.api.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Column;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
-import net.snowflake.client.jdbc.internal.org.checkerframework.common.aliasing.qual.Unique;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 
 @Entity
 @Table(name = "pessoa")
@@ -72,6 +75,13 @@ public class Pessoa implements Serializable{
 	@Override
 	public int hashCode() {
 		return Objects.hash(codigo);
+	}
+	
+	
+	@JsonIgnore
+	@Transactional
+	public boolean isInativo(){
+		return !this.ativo;
 	}
 
 	@Override
